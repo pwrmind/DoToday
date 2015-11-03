@@ -1,0 +1,82 @@
+{
+	"weekday_Sunday": {
+		"message": "Sunday",
+		"description": ""
+	},
+	"weekday_Monday": {
+		"message": "Monday",
+		"description": ""
+	},
+	"weekday_Tuesday": {
+		"message": "Tuesday",
+		"description": ""
+	},
+	"weekday_Wednesday": {
+		"message": "Wednesday",
+		"description": ""
+	},
+	"weekday_Thursday": {
+		"message": "Thursday",
+		"description": ""
+	},
+	"weekday_Friday": {
+		"message": "Friday",
+		"description": ""
+	},
+	"weekday_Saturday": {
+		"message": "Saturday",
+		"description": ""
+	},
+	"month_january": {
+		"message": "january",
+		"description": ""
+	},
+	"month_february": {
+		"message": "February",
+		"description": ""
+	},
+	"month_march": {
+		"message": "March",
+		"description": ""
+	},
+	"month_april": {
+		"message": "April",
+		"description": ""
+	},
+	"month_may": {
+		"message": "May",
+		"description": ""
+	},
+	"month_june": {
+		"message": "June",
+		"description": ""
+	},
+	"month_july": {
+		"message": "July",
+		"description": ""
+	},
+	"month_august": {
+		"message": "August",
+		"description": ""
+	},
+	"month_september": {
+		"message": "September",
+		"description": ""
+	},
+	"month_october": {
+		"message": "October",
+		"description": ""
+	},
+	"month_november": {
+		"message": "November",
+		"description": ""
+	},
+	"month_december": {
+		"message": "December",
+		"description": ""
+	},
+	"daily_info_title": {
+		"message": "Daily:",
+		"description": ""
+	}
+}

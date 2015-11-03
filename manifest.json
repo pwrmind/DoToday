@@ -1,0 +1,30 @@
+{
+	"name": "DoToday",
+	"description": "DoToday is startpage and new tab.",
+	"version": "0.1",
+	"default_locale": "en",
+	"manifest_version": 2,
+	"app": {
+		"launch": {
+			"container": "tab",
+			"local_path": "main.html"
+		}
+	},
+	"chrome_url_overrides": {
+		"newtab": "main.html"
+	},
+	"icons": { 
+		"16": "img/calendar-icon-16.png",
+		"32": "img/calendar-icon-32.png",
+		"128": "img/calendar-icon-128.png" 
+	},
+	"permissions": [
+		"topSites",
+		"geolocation",
+		"webRequest",
+		"management",
+		"*://dotoday.comuv.com/*",
+		"chrome://favicon/"
+		
+	]
+}

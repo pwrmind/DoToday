@@ -1,0 +1,82 @@
+{
+	"weekday_Sunday": {
+		"message": "Воскресенье",
+		"description": ""
+	},
+	"weekday_Monday": {
+		"message": "Понедельник",
+		"description": ""
+	},
+	"weekday_Tuesday": {
+		"message": "Вторник",
+		"description": ""
+	},
+	"weekday_Wednesday": {
+		"message": "Среда",
+		"description": ""
+	},
+	"weekday_Thursday": {
+		"message": "Четверг",
+		"description": ""
+	},
+	"weekday_Friday": {
+		"message": "Пятница",
+		"description": ""
+	},
+	"weekday_Saturday": {
+		"message": "Суббота",
+		"description": ""
+	},
+	"month_january": {
+		"message": "Январь",
+		"description": ""
+	},
+	"month_february": {
+		"message": "Февраль",
+		"description": ""
+	},
+	"month_march": {
+		"message": "Март",
+		"description": ""
+	},
+	"month_april": {
+		"message": "Апрель",
+		"description": ""
+	},
+	"month_may": {
+		"message": "Май",
+		"description": ""
+	},
+	"month_june": {
+		"message": "Июнь",
+		"description": ""
+	},
+	"month_july": {
+		"message": "Июль",
+		"description": ""
+	},
+	"month_august": {
+		"message": "Авгест",
+		"description": ""
+	},
+	"month_september": {
+		"message": "Сентябрь",
+		"description": ""
+	},
+	"month_october": {
+		"message": "Октябрь",
+		"description": ""
+	},
+	"month_november": {
+		"message": "Ноябрь",
+		"description": ""
+	},
+	"month_december": {
+		"message": "Декабрь",
+		"description": ""
+	},
+	"daily_info_title": {
+		"message": "В этот день:",
+		"description": ""
+	}
+}
