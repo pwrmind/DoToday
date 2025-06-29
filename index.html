@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoToday - Отрывной календарь</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --paper-color: #f9f3e9;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --text-color: #333;
+            --light-text: #777;
+            --border-color: #e0d6c2;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #8e9eab, #eef2f3);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        /* Стили для отрывного календаря */
+        .calendar {
+            background: var(--paper-color);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            border-top: 30px solid #f1e8d7;
+            transition: all 0.3s ease;
+        }
+        
+        .calendar::before {
+            content: "";
+            position: absolute;
+            top: -25px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .calendar::after {
+            content: "";
+            position: absolute;
+            top: -30px;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 5px,
+                rgba(0, 0, 0, 0.1) 5px,
+                rgba(0, 0, 0, 0.1) 10px
+            );
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            position: relative;
+        }
+        
+        .logo::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 3px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .date-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .month {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .day-of-month {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1;
+        }
+        
+        .day-of-week {
+            font-size: 1.4rem;
+            color: var(--light-text);
+            margin-top: 5px;
+        }
+        
+        .zodiac {
+            margin-top: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .day-length {
+            display: flex;
+            justify-content: space-between;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .sun-event {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sun-event i {
+            font-size: 1.8rem;
+            color: #f39c12;
+            margin-bottom: 5px;
+        }
+        
+        .weather-block {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .weather-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .temperature {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        
+        .temperature-range {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .exchange-rates {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .currency {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .currency-header {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .currency-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+        
+        .currency-change {
+            font-size: 0.9rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: #eaf7ea;
+            color: #27ae60;
+        }
+        
+        .currency-change.negative {
+            background: #fdeded;
+            color: #e74c3c;
+        }
+        
+        .daily-info {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            overflow: hidden;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .daily-info-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .daily-info-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .daily-article {
+            line-height: 1.6;
+        }
+        
+        .daily-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 6px;
+            overflow: hidden;
+            background: linear-gradient(45deg, #3498db, #2c3e50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        /* Стили для поиска и задач */
+        .search-block {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .todo-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        @media (min-width: 992px) {
+            .todo-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .todo-block {
+            background: var(--paper-color);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .block-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .todo-list {
+            list-style: none;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+        
+        .todo-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 4px;
+            margin-right: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .todo-checkbox.checked {
+            background: var(--secondary-color);
+        }
+        
+        .todo-checkbox.checked::after {
+            content: "✓";
+            color: white;
+            font-size: 14px;
+        }
+        
+        .todo-text {
+            flex-grow: 1;
+            font-size: 1.1rem;
+        }
+        
+        .todo-text.completed {
+            text-decoration: line-through;
+            color: var(--light-text);
+        }
+        
+        .add-todo {
+            display: flex;
+            margin-top: 20px;
+        }
+        
+        .new-todo-input {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px 0 0 6px;
+            font-size: 1rem;
+        }
+        
+        .add-todo-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 0 6px 6px 0;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .add-todo-btn:hover {
+            background: #2980b9;
+        }
+        
+        /* Стили для топ сайтов */
+        .top-sites {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .site-tile {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px var(--shadow-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+        
+        .site-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .site-icon {
+            width: 60px;
+            height: 60px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0 10px;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+        
+        .site-title {
+            padding: 10px 5px;
+            text-align: center;
+            font-size: 0.85rem;
+            width: 100%;
+            background: #f8f8f8;
+        }
+        
+        /* Анимации и эффекты */
+        .tear-line {
+            height: 2px;
+            background: var(--accent-color);
+            margin: 10px 0 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tear-line::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(231, 76, 60, 0.5), transparent);
+            animation: tearAnimation 2s infinite;
+        }
+        
+        @keyframes tearAnimation {
+            100% {
+                left: 100%;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .calendar-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .day-of-month {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Календарный блок -->
+        <div class="calendar pulse">
+            <div class="logo">DoToday</div>
+            
+            <div class="calendar-grid">
+                <!-- Блок с датой -->
+                <div class="date-info">
+                    <div class="month" id="month">Январь</div>
+                    <div class="day-of-month" id="dayOfMonth">1</div>
+                    <div class="day-of-week" id="dayOfWeek">Понедельник</div>
+                    <div class="zodiac" id="zodiac">♑</div>
+                </div>
+                
+                <!-- Восход/закат -->
+                <div class="day-length">
+                    <div class="sun-event">
+                        <i class="fas fa-sunrise"></i>
+                        <div id="sunrise">07:30</div>
+                        <div id="sunriseDetails">+2 мин</div>
+                    </div>
+                    <div class="sun-event">
+                        <i class="fas fa-sunset"></i>
+                        <div id="sunset">18:45</div>
+                        <div id="sunsetDetails">-3 мин</div>
+                    </div>
+                </div>
+                
+                <!-- Погода -->
+                <div class="weather-block">
+                    <div class="weather-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div class="weather" id="weather">Солнечно</div>
+                    <div class="temperature" id="temperatureCurrent">22°C</div>
+                    <div class="temperature-range">
+                        <span id="temperatureMin">↓18°</span>
+                        <span id="temperatureMax">↑26°</span>
+                    </div>
+                </div>
+                
+                <!-- Курсы валют -->
+                <div class="exchange-rates">
+                    <div class="currency">
+                        <div class="currency-header">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>USD</span>
+                        </div>
+                        <div class="currency-value" id="USD">73.25</div>
+                        <div class="currency-change" id="USDDiff">+0.15</div>
+                    </div>
+                    <div class="currency">
+                        <div class="currency-header">
+                            <i class="fas fa-euro-sign"></i>
+                            <span>EUR</span>
+                        </div>
+                        <div class="currency-value" id="EUR">85.40</div>
+                        <div class="currency-change negative" id="EURDiff">-0.20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tear-line"></div>
+            
+            <!-- Ежедневная информация -->
+            <div class="daily-info">
+                <div class="daily-info-header">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Событие дня</span>
+                </div>
+                <div class="daily-info-content">
+                    <div class="daily-article" id="dailyInfoArticle">
+                        В этот день в 1961 году Юрий Гагарин стал первым человеком, полетевшим в космос. 
+                        Его знаменитое «Поехали!» ознаменовало начало новой эры в освоении космического пространства.
+                    </div>
+                    <div class="daily-image" id="dailyInfoImg">
+                        <i class="fas fa-image"></i>
+                        <span>Изображение дня</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Поиск -->
+        <div class="search-block">
+            <input type="text" class="search-input" id="searchString" placeholder="Поиск в Google...">
+        </div>
+        
+        <div class="todo-section">
+            <!-- Список дел -->
+            <div class="todo-block">
+                <h2 class="block-title">
+                    <i class="fas fa-tasks"></i>
+                    Мой список дел
+                </h2>
+                <ul class="todo-list" id="todoListItems">
+                    <li class="todo-item">
+                        <div class="todo-checkbox checked"></div>
+                        <div class="todo-text completed">Обновить стартовую страницу</div>
+                    </li>
+                    <li class="todo-item">
+                        <div class="todo-checkbox checked"></div>
+                        <div class="todo-text completed">Изучить новые технологии</div>
+                    </li>
+                    <li class="todo-item">
+                        <div class="todo-checkbox"></div>
+                        <div class="todo-text">Добавить анимации</div>
+                    </li>
+                    <li class="todo-item">
+                        <div class="todo-checkbox"></div>
+                        <div class="todo-text">Протестировать на разных устройствах</div>
+                    </li>
+                </ul>
+                
+                <div class="add-todo">
+                    <input type="text" class="new-todo-input" id="newTodoInput" placeholder="Добавить новую задачу...">
+                    <button class="add-todo-btn" id="addTodoBtn">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Топ сайтов -->
+            <div class="todo-block">
+                <h2 class="block-title">
+                    <i class="fas fa-star"></i>
+                    Часто посещаемые
+                </h2>
+                <div class="top-sites" id="topSitesBlock">
+                    <a href="#" class="site-tile">
+                        <div class="site-icon">
+                            <i class="fab fa-google"></i>
+                        </div>
+                        <div class="site-title">Google</div>
+                    </a>
+                    <a href="#" class="site-tile">
+                        <div class="site-icon">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                        <div class="site-title">YouTube</div>
+                    </a>
+                    <a href="#" class="site-tile">
+                        <div class="site-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="site-title">GitHub</div>
+                    </a>
+                    <a href="#" class="site-tile">
+                        <div class="site-icon">
+                            <i class="fab fa-stack-overflow"></i>
+                        </div>
+                        <div class="site-title">Stack Overflow</div>
+                    </a>
+                    <a href="#" class="site-tile">
+                        <div class="site-icon">
+                            <i class="fab fa-wikipedia-w"></i>
+                        </div>
+                        <div class="site-title">Wikipedia</div>
+                    </a>
+                    <a href="#" class="site-tile">
+                        <div class="site-icon">
+                            <i class="fab fa-reddit"></i>
+                        </div>
+                        <div class="site-title">Reddit</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Объект для управления состоянием приложения
+        const appState = {
+            todos: [],
+            topSites: [],
+            currentDate: new Date(),
+            weatherData: null,
+            exchangeData: null
+        };
+
+        // Инициализация приложения
+        function initApp() {
+            // Установка текущей даты
+            updateDate();
+            
+            // Инициализация списка дел
+            loadTodos();
+            
+            // Загрузка топ сайтов
+            loadTopSites();
+            
+            // Инициализация обработчиков событий
+            setupEventListeners();
+            
+            // Обновление данных каждую минуту
+            setInterval(updateDateTime, 60000);
+            
+            // Получение геолокации и обновление погоды
+            getLocation();
+            
+            // Получение курсов валют
+            updateExchangeRates();
+            
+            // Установка случайного события дня
+            setDailyEvent();
+        }
+
+        // Обновление даты и времени
+        function updateDate() {
+            const now = new Date();
+            appState.currentDate = now;
+            
+            // Обновление элементов даты
+            document.getElementById('month').textContent = getMonthName(now.getMonth());
+            document.getElementById('dayOfMonth').textContent = now.getDate();
+            document.getElementById('dayOfWeek').textContent = getWeekdayName(now.getDay());
+            document.getElementById('zodiac').textContent = getZodiacSign(now.getDate(), now.getMonth());
+            
+            // Обновление времени восхода и заката (заглушка)
+            document.getElementById('sunrise').textContent = formatTime(6, 30);
+            document.getElementById('sunset').textContent = formatTime(19, 45);
+        }
+
+        // Обновление времени
+        function updateDateTime() {
+            const now = new Date();
+            // Обновляем только если дата изменилась
+            if (now.getDate() !== appState.currentDate.getDate()) {
+                updateDate();
+            }
+        }
+
+        // Получение названия месяца
+        function getMonthName(month) {
+            const months = [
+                'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+            ];
+            return months[month];
+        }
+
+        // Получение названия дня недели
+        function getWeekdayName(day) {
+            const weekdays = [
+                'Воскресенье', 'Понедельник', 'Вторник', 'Среда',
+                'Четверг', 'Пятница', 'Суббота'
+            ];
+            return weekdays[day];
+        }
+
+        // Форматирование времени
+        function formatTime(hours, minutes) {
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        // Определение знака зодиака
+        function getZodiacSign(day, month) {
+            const signs = [
+                { start: [3, 21], end: [4, 19], sign: "♈" }, // Овен
+                { start: [4, 20], end: [5, 20], sign: "♉" }, // Телец
+                { start: [5, 21], end: [6, 20], sign: "♊" }, // Близнецы
+                { start: [6, 21], end: [7, 22], sign: "♋" }, // Рак
+                { start: [7, 23], end: [8, 22], sign: "♌" }, // Лев
+                { start: [8, 23], end: [9, 22], sign: "♍" }, // Дева
+                { start: [9, 23], end: [10, 22], sign: "♎" }, // Весы
+                { start: [10, 23], end: [11, 21], sign: "♏" }, // Скорпион
+                { start: [11, 22], end: [12, 21], sign: "♐" }, // Стрелец
+                { start: [12, 22], end: [0, 19], sign: "♑" }, // Козерог
+                { start: [0, 20], end: [1, 18], sign: "♒" }, // Водолей
+                { start: [1, 19], end: [2, 20], sign: "♓" }  // Рыбы
+            ];
+            
+            for (const sign of signs) {
+                const startMonth = sign.start[0];
+                const startDay = sign.start[1];
+                const endMonth = sign.end[0];
+                const endDay = sign.end[1];
+                
+                if (
+                    (month === startMonth && day >= startDay) ||
+                    (month === endMonth && day <= endDay)
+                ) {
+                    return sign.sign;
+                }
+            }
+            
+            return "♑"; // По умолчанию Козерог
+        }
+
+        // Загрузка списка дел
+        function loadTodos() {
+            // Загрузка из localStorage
+            const savedTodos = localStorage.getItem('todos');
+            if (savedTodos) {
+                appState.todos = JSON.parse(savedTodos);
+            } else {
+                // Стандартные задачи
+                appState.todos = [
+                    { id: 1, text: 'Обновить стартовую страницу', completed: true },
+                    { id: 2, text: 'Изучить новые технологии', completed: true },
+                    { id: 3, text: 'Добавить анимации', completed: false },
+                    { id: 4, text: 'Протестировать на разных устройствах', completed: false }
+                ];
+            }
+            
+            renderTodos();
+        }
+
+        // Отображение списка дел
+        function renderTodos() {
+            const todoList = document.getElementById('todoListItems');
+            todoList.innerHTML = '';
+            
+            appState.todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.className = 'todo-item';
+                
+                const checkbox = document.createElement('div');
+                checkbox.className = `todo-checkbox ${todo.completed ? 'checked' : ''}`;
+                checkbox.dataset.id = todo.id;
+                
+                const text = document.createElement('div');
+                text.className = `todo-text ${todo.completed ? 'completed' : ''}`;
+                text.textContent = todo.text;
+                
+                checkbox.addEventListener('click', () => toggleTodoComplete(todo.id));
+                
+                li.appendChild(checkbox);
+                li.appendChild(text);
+                todoList.appendChild(li);
+            });
+            
+            // Сохраняем в localStorage
+            localStorage.setItem('todos', JSON.stringify(appState.todos));
+        }
+
+        // Переключение статуса задачи
+        function toggleTodoComplete(id) {
+            const todo = appState.todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                renderTodos();
+            }
+        }
+
+        // Добавление новой задачи
+        function addNewTodo() {
+            const input = document.getElementById('newTodoInput');
+            const text = input.value.trim();
+            
+            if (text) {
+                const newTodo = {
+                    id: Date.now(),
+                    text: text,
+                    completed: false
+                };
+                
+                appState.todos.push(newTodo);
+                renderTodos();
+                
+                // Очищаем поле ввода
+                input.value = '';
+            }
+        }
+
+        // Загрузка топ сайтов
+        function loadTopSites() {
+            // В реальном приложении здесь будет вызов chrome.topSites.get()
+            // Для демонстрации используем фиктивные данные
+            appState.topSites = [
+                { title: 'Google', url: 'https://google.com', icon: 'fab fa-google' },
+                { title: 'YouTube', url: 'https://youtube.com', icon: 'fab fa-youtube' },
+                { title: 'GitHub', url: 'https://github.com', icon: 'fab fa-github' },
+                { title: 'Stack Overflow', url: 'https://stackoverflow.com', icon: 'fab fa-stack-overflow' },
+                { title: 'Wikipedia', url: 'https://wikipedia.org', icon: 'fab fa-wikipedia-w' },
+                { title: 'Reddit', url: 'https://reddit.com', icon: 'fab fa-reddit' }
+            ];
+            
+            renderTopSites();
+        }
+
+        // Отображение топ сайтов
+        function renderTopSites() {
+            const topSitesBlock = document.getElementById('topSitesBlock');
+            topSitesBlock.innerHTML = '';
+            
+            appState.topSites.forEach(site => {
+                const link = document.createElement('a');
+                link.className = 'site-tile';
+                link.href = site.url;
+                link.target = '_blank';
+                
+                const icon = document.createElement('div');
+                icon.className = 'site-icon';
+                
+                const iconElement = document.createElement('i');
+                iconElement.className = site.icon;
+                icon.appendChild(iconElement);
+                
+                const title = document.createElement('div');
+                title.className = 'site-title';
+                title.textContent = site.title;
+                
+                link.appendChild(icon);
+                link.appendChild(title);
+                topSitesBlock.appendChild(link);
+            });
+        }
+
+        // Получение геолокации
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => updateWeather(position.coords.latitude, position.coords.longitude),
+                    error => console.error('Ошибка геолокации:', error)
+                );
+            } else {
+                console.log('Геолокация не поддерживается');
+                // Используем координаты по умолчанию (Москва)
+                updateWeather(55.7558, 37.6173);
+            }
+        }
+
+        // Обновление погоды
+        function updateWeather(lat, lon) {
+            // В реальном приложении здесь будет вызов API погоды
+            // Для демонстрации используем фиктивные данные
+            const weatherConditions = [
+                { type: 'sunny', icon: 'fas fa-sun', temp: 22, min: 18, max: 26, desc: 'Солнечно' },
+                { type: 'cloudy', icon: 'fas fa-cloud', temp: 18, min: 15, max: 20, desc: 'Облачно' },
+                { type: 'rain', icon: 'fas fa-cloud-rain', temp: 15, min: 12, max: 17, desc: 'Дождь' }
+            ];
+            
+            const weather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+            
+            document.querySelector('.weather-icon i').className = weather.icon;
+            document.getElementById('weather').textContent = weather.desc;
+            document.getElementById('temperatureCurrent').textContent = `${weather.temp}°C`;
+            document.getElementById('temperatureMin').textContent = `↓${weather.min}°`;
+            document.getElementById('temperatureMax').textContent = `↑${weather.max}°`;
+        }
+
+        // Обновление курсов валют
+        function updateExchangeRates() {
+            // В реальном приложении здесь будет вызов API курсов валют
+            // Для демонстрации используем фиктивные данные
+            const usd = (Math.random() * 5 + 70).toFixed(2);
+            const eur = (Math.random() * 5 + 80).toFixed(2);
+            const usdDiff = (Math.random() - 0.5).toFixed(2);
+            const eurDiff = (Math.random() - 0.5).toFixed(2);
+            
+            document.getElementById('USD').textContent = usd;
+            document.getElementById('EUR').textContent = eur;
+            
+            const usdDiffElement = document.getElementById('USDDiff');
+            usdDiffElement.textContent = usdDiff > 0 ? `+${usdDiff}` : usdDiff;
+            usdDiffElement.className = `currency-change ${usdDiff >= 0 ? '' : 'negative'}`;
+            
+            const eurDiffElement = document.getElementById('EURDiff');
+            eurDiffElement.textContent = eurDiff > 0 ? `+${eurDiff}` : eurDiff;
+            eurDiffElement.className = `currency-change ${eurDiff >= 0 ? '' : 'negative'}`;
+        }
+
+        // Установка события дня
+        function setDailyEvent() {
+            const events = [
+                "В 1961 году Юрий Гагарин стал первым человеком, полетевшим в космос.",
+                "В 1986 году произошла авария на Чернобыльской АЭС.",
+                "В 1945 году советские войска начали штурм Берлина.",
+                "В 1912 году затонул Титаник.",
+                "В 1969 году Нил Армстронг ступил на поверхность Луны."
+            ];
+            
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            document.getElementById('dailyInfoArticle').textContent = `В этот день ${randomEvent}`;
+        }
+
+        // Настройка обработчиков событий
+        function setupEventListeners() {
+            // Добавление новой задачи
+            document.getElementById('addTodoBtn').addEventListener('click', addNewTodo);
+            document.getElementById('newTodoInput').addEventListener('keypress', e => {
+                if (e.key === 'Enter') addNewTodo();
+            });
+            
+            // Обработка поиска
+            document.getElementById('searchString').addEventListener('keypress', e => {
+                if (e.key === 'Enter') {
+                    const query = e.target.value;
+                    if (query) {
+                        window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+                    }
+                }
+            });
+            
+            // Эффекты при наведении на элементы календаря
+            const calendarElements = document.querySelectorAll('.date-info, .day-length, .weather-block, .exchange-rates, .daily-info');
+            calendarElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    el.style.transform = 'translateY(-5px)';
+                    el.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
+                });
+                
+                el.addEventListener('mouseleave', () => {
+                    el.style.transform = '';
+                    el.style.boxShadow = '';
+                });
+            });
+        }
+
+        // Запуск приложения после загрузки страницы
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
